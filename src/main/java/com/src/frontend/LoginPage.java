@@ -1,6 +1,13 @@
 package com.src.frontend;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -16,8 +23,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-
-import com.src.auth.Login;
 
 
 
@@ -147,9 +152,18 @@ public class LoginPage extends JFrame {
             //Notification access successfully
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Login login = new Login();
+                // String username = usernameField.getText();
+                // String password = new String(passwordField.getPassword());
+            
+                // if (login.handleLogin(username, password)) {
+                //     new HomePage();
+                //     setVisible(false);
+                // }
                 new HomePage();
                 setVisible(false);
             }
+            
         });
 
         BottomRightPanel.add(loginButton);

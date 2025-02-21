@@ -1,6 +1,12 @@
 package com.src.frontend;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -8,10 +14,22 @@ import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import javax.swing.*;
-import javax.swing.border.LineBorder;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+
+import com.src.view.menu.BookCard;
+import com.src.view.menu.BookTable;
+import com.src.view.menu.BorrowerCard;
+import com.src.view.menu.BorrowerTable;
+import com.src.view.menu.IssuedBookCard;
 
 
 public class HomePage extends JFrame {
@@ -63,6 +81,13 @@ public class HomePage extends JFrame {
     private JLabel BorrowerTablePanelTitle;
     private JTable BorrowerTable;
 
+    //Access database
+    private BookCard bookCard;
+    private BorrowerCard borrowerCard;
+    private IssuedBookCard issuedBookCard;
+    private BookTable booktable;
+    private BorrowerTable borrowerTable;
+
     public HomePage() {
         setPreferredSize(new Dimension(1000, 640));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -76,6 +101,14 @@ public class HomePage extends JFrame {
     }
 
     private void initComponents() {
+        //Init access database
+        bookCard = new BookCard();
+        borrowerCard = new BorrowerCard();
+        issuedBookCard = new IssuedBookCard();
+        booktable = new BookTable();
+        borrowerTable = new BorrowerTable();
+
+
         Color DarkColor = new Color(5, 77, 120);
         Color LightColor = new Color(220,238,229);
         int heightButton = 45;
@@ -208,6 +241,10 @@ public class HomePage extends JFrame {
         BookPanel.setLayout(null);
         StatPanel.add(BookPanel);
 
+        /////////////////////////////////////////MENU-CARD/////////////////////////////////////////////
+        //Card no of book
+
+
         BookPanelTitle = new JLabel("No. Of Books");
         BookPanelTitle.setOpaque(true);
         BookPanelTitle.setBackground(DarkColor);
@@ -217,19 +254,25 @@ public class HomePage extends JFrame {
         BookPanelTitle.setHorizontalAlignment(SwingConstants.CENTER);
         BookPanel.add(BookPanelTitle);
 
+
+
         ImageIcon BookIcon = new ImageIcon(getClass().getResource("/com/res/BookIcon.png"));
         Image scaledBookImage = BookIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
         BookPanelIcon = new JLabel(new ImageIcon(scaledBookImage));
         BookPanelIcon.setBounds(0,30,120,120);
         BookPanel.add(BookPanelIcon);
 
-        BookPanelStat = new JLabel("10");
+        //Get value no of book
+       
+        BookPanelStat = new JLabel(bookCard.showupDB());
         BookPanelStat.setFont(new Font("Tahoma", Font.BOLD, 60));
         BookPanelStat.setForeground(DarkColor);
         BookPanelStat.setBounds(120, 30, 120, 120);
         BookPanelStat.setHorizontalAlignment(SwingConstants.CENTER);
         BookPanel.add(BookPanelStat);
 
+        ////////////////////////////////////////////////////////////////////////
+        //Borrower 
         BorrowerPanel = new JPanel();
         BorrowerPanel.setBackground(LightColor);
         BorrowerPanel.setBounds(275,0,240,150);
@@ -251,13 +294,15 @@ public class HomePage extends JFrame {
         BorrowerPanelIcon.setBounds(0,30,120,120);
         BorrowerPanel.add(BorrowerPanelIcon);
 
-        BorrowerPanelStat = new JLabel("10");
+        BorrowerPanelStat = new JLabel(borrowerCard.showupDB());
         BorrowerPanelStat.setFont(new Font("Tahoma", Font.BOLD, 60));
         BorrowerPanelStat.setForeground(DarkColor);
         BorrowerPanelStat.setBounds(120, 30, 120, 120);
         BorrowerPanelStat.setHorizontalAlignment(SwingConstants.CENTER);
         BorrowerPanel.add(BorrowerPanelStat);
 
+        ///////////////////////////////////////////////////////////////////////////////////
+        //Issue book
         IssuedPanel = new JPanel();
         IssuedPanel.setBackground(LightColor);
         IssuedPanel.setBounds(535,0,240,150);
@@ -279,13 +324,14 @@ public class HomePage extends JFrame {
         IssuedPanelIcon.setBounds(0,30,120,120);
         IssuedPanel.add(IssuedPanelIcon);
 
-        IssuedPanelStat = new JLabel("10");
+        IssuedPanelStat = new JLabel(issuedBookCard.showupDB());
         IssuedPanelStat.setFont(new Font("Tahoma", Font.BOLD, 60));
         IssuedPanelStat.setForeground(DarkColor);
         IssuedPanelStat.setBounds(120, 30, 120, 120);
         IssuedPanelStat.setHorizontalAlignment(SwingConstants.CENTER);
         IssuedPanel.add(IssuedPanelStat);
-
+        //////////////////////////////////////////////////////////////////////////////////////////////
+    
         TablePanel = new JPanel();
         TablePanel.setBackground(Color.WHITE);
         TablePanel.setBounds(-2,355,800,220);
@@ -323,10 +369,19 @@ public class HomePage extends JFrame {
 
         };
 
-        DefaultTableModel modelBookTable = new DefaultTableModel(dataBookTable, columnBookTable);
+        DefaultTableModel modelBookTable = new DefaultTableModel(dataBookTable, columnBookTable) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        BookTable = new JTable(modelBookTable);
+        
         BookTable = new JTable(modelBookTable);
         BookTable.setBackground(LightColor);
         BookTable.setForeground(DarkColor);
+        booktable.loadBookData(BookTable);
+        
 
         JTableHeader headerBookTable = BookTable.getTableHeader();
         headerBookTable.setOpaque(false);
@@ -354,7 +409,7 @@ public class HomePage extends JFrame {
         BorrowerTablePanelTitle.setHorizontalAlignment(SwingConstants.CENTER);
         BorrowerTablePanel.add(BorrowerTablePanelTitle);
 
-        String[] columnBorrowerTable = {"ID", "Name", "Age", "Gender"};
+        String[] columnBorrowerTable = {"ID", "Name", "Email", "Phone Number"};
 
         Object[][] dataBorrowerTable = {
                 {"1", "Borrower 1", "18", "Male"},
@@ -370,10 +425,16 @@ public class HomePage extends JFrame {
 
         };
 
-        DefaultTableModel modelBorrowerTable = new DefaultTableModel(dataBorrowerTable, columnBorrowerTable);
+        DefaultTableModel modelBorrowerTable = new DefaultTableModel(dataBorrowerTable, columnBorrowerTable){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         BorrowerTable = new JTable(modelBorrowerTable);
         BorrowerTable.setBackground(LightColor);
         BorrowerTable.setForeground(DarkColor);
+        borrowerTable.loadBorrowerData(BorrowerTable);
 
         JTableHeader headerBorrowerTable = BorrowerTable.getTableHeader();
         headerBorrowerTable.setOpaque(false);
@@ -433,4 +494,6 @@ public class HomePage extends JFrame {
         }
     }
 
-}
+    
+
+}   
